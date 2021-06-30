@@ -29,7 +29,7 @@ def st_shap(plot, height=None):
     components.html(shap_html, height=height)
 
 # Webapp title
-st.set_page_config(page_title='XAI with SHAP')
+st.set_page_config(page_title='XAI with SHAP', layout="wide")
 
 st.title("Explainable Artificial Intelligence with SHAP")
 
