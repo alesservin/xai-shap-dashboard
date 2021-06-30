@@ -34,8 +34,13 @@ st.title("XAI with SHAP")
 
 # Sidebar
 # Input sidebar subheader
-st.sidebar.subheader('Options')
-test_size= st.sidebar.number_input(label='Test size', min_value=0.1, max_value=0.9,format='%f',step=0.1, value=0.2)
+st.sidebar.header('Options')
+st.sidebar.subheader("Show plots:")
+show_dataset_dictionary = st.sidebar.checkbox(label='Dataset dictionary ', value=False)
+show_force_plots = st.sidebar.checkbox(label='Force plots ', value=True)
+show_feature_importance_plot = st.sidebar.checkbox(label='Feature importance ', value=True)
+show_mean_importance_plot = st.sidebar.checkbox(label='Mean importance', value=True)
+show_dependence_plot = st.sidebar.checkbox(label='Dependence plot', value=True)
 
 # Load dataset
 X, y = load_data(display=False)
@@ -70,32 +75,38 @@ dataset_dictionary = pd.DataFrame({
                     "nitric oxides concentration (parts per 10 million)",
                     "...more"]
 })
-st.write("Dataset dictionary:")
-st.write(dataset_dictionary)
-st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
 
-# visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
-selected_index = st.selectbox('Index', (list(range(10))))
-st_shap(shap.force_plot(explainer.expected_value, shap_values[selected_index, :], X.iloc[selected_index, :]))
+if show_dataset_dictionary:
+    st.write("Dataset dictionary:")
+    st.write(dataset_dictionary)
+    st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
 
-# visualize the training set predictions
-selected_num = st.select_slider('number of examples', options=list(np.arange(10, 100, 10)))
-st_shap(shap.force_plot(explainer.expected_value, shap_values[:selected_num, :], X.iloc[:selected_num, :]), 400)
+if show_force_plots:
+    # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
+    selected_index = st.selectbox('Index', (list(range(10))))
+    st_shap(shap.force_plot(explainer.expected_value, shap_values[selected_index, :], X.iloc[selected_index, :]))
+
+    # visualize the training set predictions
+    selected_num = st.select_slider('number of examples', options=list(np.arange(10, 100, 10)))
+    st_shap(shap.force_plot(explainer.expected_value, shap_values[:selected_num, :], X.iloc[:selected_num, :]), 400)
 
 # visualize the summary plot
 # st.pyplot(shap.summary_plot(shap_values, X)) another way to show the summary plot
-plt.title('Feature importance based on SHAP values')
-shap.summary_plot(shap_values, X, show=False)
-st.pyplot()
+if show_feature_importance_plot:
+    plt.title('Feature importance based on SHAP values')
+    shap.summary_plot(shap_values, X, show=False)
+    st.pyplot()
 
 # visualize Bar chart of mean importance
-plt.title('Bar chart of mean importance')
-shap.summary_plot(shap_values, X_display, plot_type="bar")
-st.pyplot()
+if show_mean_importance_plot:
+    plt.title('Bar chart of mean importance')
+    shap.summary_plot(shap_values, X_display, plot_type="bar")
+    st.pyplot()
 
 # visualize SHAP for each feature
 # TODO cambiar por los otros graficos, al final de la documentacion esta
-st.title("SHAP Dependence Plots")
-for name in X_train.columns:
-    shap.dependence_plot(name, shap_values, X, display_features=X_display)
-    st.pyplot()
+if show_dependence_plot:
+    st.title("SHAP Dependence Plots")
+    for name in X_train.columns:
+        shap.dependence_plot(name, shap_values, X, display_features=X_display)
+        st.pyplot()
