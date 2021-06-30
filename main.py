@@ -33,6 +33,17 @@ st.set_page_config(page_title='XAI with SHAP')
 
 st.title("Explainable Artificial Intelligence with SHAP")
 
+# Sidebar
+# Input sidebar subheader
+st.sidebar.header('Options')
+st.sidebar.subheader("Show plots:")
+show_dataset_dictionary = st.sidebar.checkbox(label='Dataset dictionary ', value=False)
+show_force_plots = st.sidebar.checkbox(label='Force plots ', value=True)
+show_feature_importance_plot = st.sidebar.checkbox(label='Feature importance ', value=True)
+show_mean_importance_plot = st.sidebar.checkbox(label='Mean importance', value=True)
+show_dependence_plot = st.sidebar.checkbox(label='Dependence plot', value=True)
+
+
 # Load dataset
 X, y = load_data(display=False)
 X_display, y_display = load_data(display=True)
@@ -82,36 +93,41 @@ dataset_dictionary = pd.DataFrame({
                     "% lower status of the population",
                     "Median value of owner-occupied homes in $1000’s"]
 })
-st.write("Dataset dictionary:")
-st.table(dataset_dictionary)
-st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
+if show_dataset_dictionary:
+    st.write("Dataset dictionary:")
+    st.table(dataset_dictionary)
+    st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
 
 # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
-st.header("Visualize a single prediction")
-selected_index = st.number_input('Prediction index (max. %s)' % (len(shap_values)-1), value=0,min_value=0,
-                                 max_value=(len(shap_values)-1), step=1)
-st_shap(shap.force_plot(explainer.expected_value, shap_values[selected_index, :], X.iloc[selected_index, :]))
+if show_force_plots:
+    st.header("Visualize a single prediction")
+    selected_index = st.number_input('Prediction index (max. %s)' % (len(shap_values)-1), value=0,min_value=0,
+                                     max_value=(len(shap_values)-1), step=1)
+    st_shap(shap.force_plot(explainer.expected_value, shap_values[selected_index, :], X.iloc[selected_index, :]))
 
-# visualize the training set predictions
-st.header("Visualize many predictions")
-selected_num = st.select_slider('Number of examples', options=list(np.arange(10, (len(shap_values)-1), 10)))
-st_shap(shap.force_plot(explainer.expected_value, shap_values[:selected_num, :], X.iloc[:selected_num, :]), 400)
+    # visualize the training set predictions
+    st.header("Visualize many predictions")
+    selected_num = st.select_slider('Number of examples', options=list(np.arange(10, (len(shap_values)-1), 10)))
+    st_shap(shap.force_plot(explainer.expected_value, shap_values[:selected_num, :], X.iloc[:selected_num, :]), 400)
 
 # visualize the summary plot
-st.header("SHAP Summary Plot")
-plt.title('Feature importance based on SHAP values')
-shap.summary_plot(shap_values, X, show=False)
-st.pyplot()
+if show_feature_importance_plot:
+    st.header("SHAP Summary Plot")
+    plt.title('Feature importance based on SHAP values')
+    shap.summary_plot(shap_values, X, show=False)
+    st.pyplot()
 
 # visualize Bar chart of mean importance
-st.header('Bar chart of mean importance')
-shap.summary_plot(shap_values, X_display, plot_type="bar")
-st.pyplot()
+if show_mean_importance_plot:
+    st.header('Bar chart of mean importance')
+    shap.summary_plot(shap_values, X_display, plot_type="bar")
+    st.pyplot()
 
 # visualize SHAP Dependence Plots
-st.header("SHAP Dependence Plots")
-column1, column2 = st.beta_columns(2)
-feature_dependence_plot = column1.selectbox('Feature', X_train.columns, index=0)
-interaction_selector = column2.selectbox('Interaction feature', X_train.columns, index=5)
-shap.dependence_plot(feature_dependence_plot, shap_values, X,  interaction_index=interaction_selector)
-st.pyplot()
+if show_dependence_plot:
+    st.header("SHAP Dependence Plots")
+    column1, column2 = st.beta_columns(2)
+    feature_dependence_plot = column1.selectbox('Feature', X_train.columns, index=0)
+    interaction_selector = column2.selectbox('Interaction feature', X_train.columns, index=5)
+    shap.dependence_plot(feature_dependence_plot, shap_values, X,  interaction_index=interaction_selector)
+    st.pyplot()
