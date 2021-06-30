@@ -28,6 +28,8 @@ def st_shap(plot, height=None):
     shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
     components.html(shap_html, height=height)
 
+# Webapp title
+st.set_page_config(page_title='XAI with SHAP')
 
 st.title("Explainable Artificial Intelligence with SHAP")
 
