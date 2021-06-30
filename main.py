@@ -92,9 +92,10 @@ st.header('Bar chart of mean importance')
 shap.summary_plot(shap_values, X_display, plot_type="bar")
 st.pyplot()
 
-# visualize SHAP for each feature
-# TODO cambiar por los otros graficos, al final de la documentacion esta
+# visualize SHAP Dependence Plots
 st.header("SHAP Dependence Plots")
-feature_selector = st.selectbox('Feature', X_train.columns, index=0)
-shap.dependence_plot(feature_selector, shap_values, X, display_features=X_display)
+column1, column2 = st.beta_columns(2)
+feature_dependence_plot = column1.selectbox('Feature', X_train.columns, index=0)
+interaction_selector = column2.selectbox('Interaction feature', X_train.columns, index=5)
+shap.dependence_plot(feature_dependence_plot, shap_values, X,  interaction_index=interaction_selector)
 st.pyplot()
