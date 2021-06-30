@@ -28,8 +28,14 @@ def st_shap(plot, height=None):
     shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
     components.html(shap_html, height=height)
 
+st.set_page_config(page_title="XAI with SHAP")
 
 st.title("XAI with SHAP")
+
+# Sidebar
+# Input sidebar subheader
+st.sidebar.subheader('Options')
+test_size= st.sidebar.number_input(label='Test size', min_value=0.1, max_value=0.9,format='%f',step=0.1, value=0.2)
 
 # Load dataset
 X, y = load_data(display=False)
