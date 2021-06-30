@@ -29,7 +29,7 @@ def st_shap(plot, height=None):
     components.html(shap_html, height=height)
 
 
-st.title("XAI with SHAP")
+st.title("Explainable Artificial Intelligence with SHAP")
 
 # Load dataset
 X, y = load_data(display=False)
@@ -69,27 +69,30 @@ st.write(dataset_dictionary)
 st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
 
 # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
-selected_index = st.selectbox('Index', (list(range(10))))
+st.header("Visualize a single prediction")
+selected_index = st.number_input('Prediction index (max. %s)' % (len(shap_values)-1), value=0,min_value=0,
+                                 max_value=(len(shap_values)-1), step=1)
 st_shap(shap.force_plot(explainer.expected_value, shap_values[selected_index, :], X.iloc[selected_index, :]))
 
 # visualize the training set predictions
-selected_num = st.select_slider('number of examples', options=list(np.arange(10, 100, 10)))
+st.header("Visualize many predictions")
+selected_num = st.select_slider('Number of examples', options=list(np.arange(10, (len(shap_values)-1), 10)))
 st_shap(shap.force_plot(explainer.expected_value, shap_values[:selected_num, :], X.iloc[:selected_num, :]), 400)
 
 # visualize the summary plot
-# st.pyplot(shap.summary_plot(shap_values, X)) another way to show the summary plot
+st.header("SHAP Summary Plot")
 plt.title('Feature importance based on SHAP values')
 shap.summary_plot(shap_values, X, show=False)
 st.pyplot()
 
 # visualize Bar chart of mean importance
-plt.title('Bar chart of mean importance')
+st.header('Bar chart of mean importance')
 shap.summary_plot(shap_values, X_display, plot_type="bar")
 st.pyplot()
 
 # visualize SHAP for each feature
 # TODO cambiar por los otros graficos, al final de la documentacion esta
-st.title("SHAP Dependence Plots")
-for name in X_train.columns:
-    shap.dependence_plot(name, shap_values, X, display_features=X_display)
-    st.pyplot()
+st.header("SHAP Dependence Plots")
+feature_selector = st.selectbox('Feature', X_train.columns, index=0)
+shap.dependence_plot(feature_selector, shap_values, X, display_features=X_display)
+st.pyplot()
