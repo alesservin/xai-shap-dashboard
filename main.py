@@ -58,16 +58,32 @@ dataset_dictionary = pd.DataFrame({
                 "INDUS",
                 "CHAS",
                 "NOX",
-                "...more"],
+                "RM",
+                "AGE",
+                "DIS",
+                "RAD",
+                "TAX",
+                "PTRATIO",
+                "B",
+                "LSTAT",
+                "MEDV"],
     'Description': ["per capita crime rate by town",
                     "proportion of residential land zoned for lots over 25,000 sq.ft.",
                     "proportion of non-retail business acres per town",
                     "Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)",
                     "nitric oxides concentration (parts per 10 million)",
-                    "...more"]
+                    "average number of rooms per dwelling",
+                    "proportion of owner-occupied units built prior to 1940",
+                    "weighted distances to five Boston employment centres",
+                    "index of accessibility to radial highways",
+                    "full-value property-tax rate per $10,000",
+                    "pupil-teacher ratio by town",
+                    "1000(Bk - 0.63)^2 where Bk is the proportion of black people by town",
+                    "% lower status of the population",
+                    "Median value of owner-occupied homes in $1000’s"]
 })
 st.write("Dataset dictionary:")
-st.write(dataset_dictionary)
+st.table(dataset_dictionary)
 st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
 
 # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
