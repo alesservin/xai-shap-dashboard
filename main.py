@@ -87,15 +87,24 @@ st.write("Dataset information: %s" % datasets_links[selected_dataset])
 
 # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
 if show_force_plots:
-    st.header("Visualize a single prediction")
+    st.header("Force plots")
+    st.subheader("Visualize a single prediction")
     selected_index = st.number_input('Prediction index (max. %s)' % (len(shap_values)-1), value=0,min_value=0,
                                      max_value=(len(shap_values)-1), step=1)
     st_shap(shap.force_plot(explainer.expected_value, shap_values[selected_index, :], X.iloc[selected_index, :]))
 
     # visualize the training set predictions
-    st.header("Visualize many predictions")
+    st.subheader("Visualize many predictions")
     selected_num = st.select_slider('Number of examples', options=list(np.arange(10, (len(shap_values)-1), 10)))
     st_shap(shap.force_plot(explainer.expected_value, shap_values[:selected_num, :], X.iloc[:selected_num, :]), 400)
+
+    with st.beta_expander("More about these plots"):
+        st.markdown("""
+           The Force plots are effective at showing how the model arrived at its decision.
+           
+           The SHAP values displayed are additive. Once the negative values (blue) are substracted from the positive 
+           values (red), the distance from the base value to the output remains.
+        """)
 
 # visualize the summary plot
 if show_feature_importance_plot:
@@ -104,11 +113,27 @@ if show_feature_importance_plot:
     shap.summary_plot(shap_values, X, show=False)
     st.pyplot()
 
+    with st.beta_expander("More about this plot"):
+        st.markdown("""
+           This summary plot (beeswarm plot) is designed to display an information-dense summary of how the top features
+            in a dataset impact the model’s output. Each instance the given explanation is represented by a single dot 
+            on each feature fow. The x position of the dot is determined by the SHAP value of that feature, and dots 
+            “pile up” along each feature row to show density. 
+            
+            Color is used to display the original value of a feature. 
+        """)
+
 # visualize Bar chart of mean importance
 if show_mean_importance_plot:
     st.header('Bar chart of mean importance')
     shap.summary_plot(shap_values, X_display, plot_type="bar")
     st.pyplot()
+
+    with st.beta_expander("More about this plot"):
+        st.markdown("""
+            This is a global feature importance plot, where the global importance of each feature is taken to be the 
+            mean absolute value for that feature over all the given samples.
+        """)
 
 # visualize SHAP Dependence Plots
 if show_dependence_plot:
@@ -118,3 +143,18 @@ if show_dependence_plot:
     interaction_selector = column2.selectbox('Interaction feature', X_train.columns, index=5)
     shap.dependence_plot(feature_dependence_plot, shap_values, X,  interaction_index=interaction_selector)
     st.pyplot()
+
+    with st.beta_expander("More about this plot"):
+        st.markdown("""
+            The dependence plot is a scatter plot that shows the effect a single feature has on the predictions made by 
+            the model. 
+
+            - Each dot is a single prediction (row) from the dataset.
+            - The x-axis is the value of the feature (from the X matrix).
+            - The y-axis is the SHAP value for that feature, which represents how much knowing that feature's value 
+               changes the output of the model for that sample's prediction. 
+            - The color corresponds to a second feature that may have an interaction effect with the feature we are 
+               plotting. If an interaction effect is present between this other feature and the feature we are plotting 
+               it will show up as a distinct vertical pattern of coloring.
+
+        """)
