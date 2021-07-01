@@ -51,6 +51,7 @@ datasets = {
 # Sidebar
 st.sidebar.header('Options')
 selected_dataset = st.sidebar.selectbox("Dataset", datasets['datasets_longname'], index=0)
+clf = st.sidebar.selectbox('Choose Classifier:',['XGBoost','Random Forest','Decision Tree'])
 st.sidebar.subheader("Show plots:")
 show_force_plots = st.sidebar.checkbox(label='Force plots ', value=True)
 show_feature_importance_plot = st.sidebar.checkbox(label='Feature importance ', value=True)
@@ -64,11 +65,31 @@ X_display, y_display = load_data(display=True, dataset_to_show=selected_dataset)
 
 # create a train/test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
-d_train = xgboost.DMatrix(X_train, label=y_train)
-d_test = xgboost.DMatrix(X_test, label=y_test)
 
-# train XGBoost model
-model = xgboost.train({"learning_rate": 0.01}, xgboost.DMatrix(X, label=y), 100)
+##---------------XGBoost
+if clf == 'XGBoost':
+     
+    d_train = xgboost.DMatrix(X_train, label=y_train)
+    d_test = xgboost.DMatrix(X_test, label=y_test)
+
+    # train XGBoost model
+    model = xgboost.train({"learning_rate": 0.01}, xgboost.DMatrix(X, label=y), 100) 
+
+##-----------------RF
+if clf == 'Random Forest':
+
+    ## Random Foreast
+    from sklearn.ensemble import RandomForestRegressor
+    model = RandomForestRegressor()
+    model.fit(X_train, y_train)
+
+##------------------Text
+if clf == 'Decision Tree':
+    
+    ## Decision Tree
+    from sklearn.tree import DecisionTreeRegressor
+    model = DecisionTreeRegressor(random_state = 0)
+    model.fit(X_train, y_train)
 
 # explain the model's predictions using SHAP
 # (same syntax works for LightGBM, CatBoost, scikit-learn and spark models)
