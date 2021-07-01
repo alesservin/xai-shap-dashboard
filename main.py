@@ -20,8 +20,18 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
 @st.cache
-def load_data(display):
-    return shap.datasets.boston(display=display)
+def load_data(display, dataset_to_show):
+    dataset = None
+
+    if dataset_to_show == 'Boston housing data':
+        dataset = shap.datasets.boston(display=display)
+    elif dataset_to_show == 'Adult census':
+        dataset = shap.datasets.adult(display=display)
+    elif dataset_to_show == 'Nhanes I':
+        dataset = shap.datasets.nhanesi(display=display)
+    elif dataset_to_show == 'Communities and crime':
+        dataset = shap.datasets.communitiesandcrime(display=display)
+    return dataset
 
 
 def st_shap(plot, height=None):
@@ -33,9 +43,14 @@ st.set_page_config(page_title='XAI with SHAP', layout="wide")
 
 st.title("Explainable Artificial Intelligence with SHAP")
 
+# Datasets
+datasets = {
+    'datasets_longname': ['Boston housing data', 'Adult census', 'Nhanes I', 'Communities and crime']
+}
+
 # Sidebar
-# Input sidebar subheader
 st.sidebar.header('Options')
+selected_dataset = st.sidebar.selectbox("Dataset", datasets['datasets_longname'], index=0)
 st.sidebar.subheader("Show plots:")
 show_dataset_dictionary = st.sidebar.checkbox(label='Dataset dictionary ', value=False)
 show_force_plots = st.sidebar.checkbox(label='Force plots ', value=True)
@@ -45,8 +60,8 @@ show_dependence_plot = st.sidebar.checkbox(label='Dependence plot', value=True)
 
 
 # Load dataset
-X, y = load_data(display=False)
-X_display, y_display = load_data(display=True)
+X, y = load_data(display=False, dataset_to_show=selected_dataset)
+X_display, y_display = load_data(display=True, dataset_to_show=selected_dataset)
 
 # create a train/test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
