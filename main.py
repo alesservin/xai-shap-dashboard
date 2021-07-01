@@ -23,7 +23,7 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 def load_data(display, dataset_to_show):
     dataset = None
 
-    if dataset_to_show == 'Boston housing data':
+    if dataset_to_show == 'Boston housing':
         dataset = shap.datasets.boston(display=display)
     elif dataset_to_show == 'Adult census':
         dataset = shap.datasets.adult(display=display)
@@ -45,14 +45,13 @@ st.title("Explainable Artificial Intelligence with SHAP")
 
 # Datasets
 datasets = {
-    'datasets_longname': ['Boston housing data', 'Adult census', 'Nhanes I', 'Communities and crime']
+    'datasets_longname': ['Boston housing', 'Adult census', 'Nhanes I', 'Communities and crime']
 }
 
 # Sidebar
 st.sidebar.header('Options')
 selected_dataset = st.sidebar.selectbox("Dataset", datasets['datasets_longname'], index=0)
 st.sidebar.subheader("Show plots:")
-show_dataset_dictionary = st.sidebar.checkbox(label='Dataset dictionary ', value=False)
 show_force_plots = st.sidebar.checkbox(label='Force plots ', value=True)
 show_feature_importance_plot = st.sidebar.checkbox(label='Feature importance ', value=True)
 show_mean_importance_plot = st.sidebar.checkbox(label='Mean importance', value=True)
@@ -77,41 +76,14 @@ explainer = shap.Explainer(model)
 shap_values = explainer.shap_values(X)
 
 # Explain dataset's features (dataset dictionary)
-# TODO poner mas features
-dataset_dictionary = pd.DataFrame({
-    'Feature': ["CRIM",
-                "ZN",
-                "INDUS",
-                "CHAS",
-                "NOX",
-                "RM",
-                "AGE",
-                "DIS",
-                "RAD",
-                "TAX",
-                "PTRATIO",
-                "B",
-                "LSTAT",
-                "MEDV"],
-    'Description': ["per capita crime rate by town",
-                    "proportion of residential land zoned for lots over 25,000 sq.ft.",
-                    "proportion of non-retail business acres per town",
-                    "Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)",
-                    "nitric oxides concentration (parts per 10 million)",
-                    "average number of rooms per dwelling",
-                    "proportion of owner-occupied units built prior to 1940",
-                    "weighted distances to five Boston employment centres",
-                    "index of accessibility to radial highways",
-                    "full-value property-tax rate per $10,000",
-                    "pupil-teacher ratio by town",
-                    "1000(Bk - 0.63)^2 where Bk is the proportion of black people by town",
-                    "% lower status of the population",
-                    "Median value of owner-occupied homes in $1000’s"]
-})
-if show_dataset_dictionary:
-    st.write("Dataset dictionary:")
-    st.table(dataset_dictionary)
-    st.write("Source: https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset")
+datasets_links = {
+    'Boston housing': 'https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset',
+    'Adult census': 'https://archive.ics.uci.edu/ml/datasets/adult',
+    'Nhanes I': 'https://wwwn.cdc.gov/nchs/nhanes/nhanes1/',
+    'Communities and crime': 'https://github.com/slundberg/shap/blob/master/data/NHANESI_X.csv'
+}
+
+st.write("Dataset information: %s" % datasets_links[selected_dataset])
 
 # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
 if show_force_plots:
