@@ -101,7 +101,7 @@ datasets_links = {
     'Boston housing': 'https://scikit-learn.org/stable/datasets/toy_dataset.html#boston-dataset',
     'Adult census': 'https://archive.ics.uci.edu/ml/datasets/adult',
     'Nhanes I': 'https://wwwn.cdc.gov/nchs/nhanes/nhanes1/',
-    'Communities and crime': 'https://github.com/slundberg/shap/blob/master/data/NHANESI_X.csv'
+    'Communities and crime': 'https://archive.ics.uci.edu/ml/datasets/communities+and+crime'
 }
 
 st.write("Dataset information: %s" % datasets_links[selected_dataset])
